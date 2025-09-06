@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SubToV - Advanced Subtitle Editor</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="s.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <h1><span class="material-icons">subtitles</span> SubToV</h1>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="video-section">
+                <div class="video-container">
+                    <div class="video-player n-screen">
+                        <div class="player-controls">
+                            <!--<button class="control-btn" onclick="togglePlayPause()" title="Play/Pause">
+                                <span class="material-icons" id="playPauseIcon">play_arrow</span>
+                            </button>
+                            <button class="control-btn" onclick="skipBackward()" title="Skip Back 5s">
+                                <span class="material-icons">replay_5</span>
+                            </button>
+                            <button class="control-btn" onclick="skipForward()" title="Skip Forward 5s">
+                                <span class="material-icons">forward_5</span>
+                            </button> -->
+                            <div id="addSubV" class="optional-settings hide">
+                                <button id="VSS" class="control-btn" onclick="captureScreenshot()" title="ss">
+                                    <span class="material-icons">camera_alt</span>
+                                </button>
+                                <button class="control-btn" onclick="addSubtitle()" title="addSub">
+                                    <span class="material-icons">add</span>
+                                </button>
+                            </div>
+                            <button class="control-btn" onclick="toggleFullscreen()" title="Fullscreen">
+                                <span id="tgFullS" class="material-icons">fullscreen</span>
+                            </button> 
+                           
+                        </div> 
+                        <video controls controlsList="nodownload nofullscreen noremoteplayback" disablePictureInPicture oncontextmenu="return false;" id="video"></video>
+                        <div id="subtitleDisplay" class="subtitle-display text-shadow-border subText">Subtitles will appear here</div>
+                    </div>
+                    
+                     <!-- <div class="video-controls">
+                        <input type="range" id="progressBar" class="progress-bar" value="0">
+                        <div class="time-display">
+                            <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
+                        </div>
+                    </div>  -->
+                    
+                    <!--  -->
+                </div>
+            </section>
+
+            <section class="controls-section">
+                <div class="controls-card">
+                    <h2><span class="material-icons">tune</span> Subtitle Controls</h2>
+                    
+                    <div class="control-group">
+                        <label for="fileInput" class="file-input-label">
+                            <span class="material-icons">attach_file</span>
+                            Select SRT File
+                        </label>
+                        <input type="file" id="fileInput" style="display:none;" accept=".srt">
+                        <p class="srtName">No file selected</p>
+                    </div>
+                    
+                    <div class="video-source-buttons">
+                        <button onclick="chooseVideo()" class="btn btn-primary">
+                            <span class="material-icons">video_library</span>
+                            Choose Video
+                        </button>
+                        <button onclick="captureScreenshot()" class="btn btn-secondary">
+                            <span class="material-icons">camera_alt</span>
+                            Screenshot
+                        </button>
+                    </div>
+                    <br>
+                    <div class="control-group">
+                        <button onclick="addSubtitle()" class="btn btn-secondary">
+                            <span class="material-icons">add</span>
+                            Add Subtitle at Current Time
+                        </button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <button onclick="promptRegexReplace()" class="btn btn-secondary">
+                            <span class="material-icons">find_replace</span>
+                            Find & Replace
+                        </button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <button onclick="adjustAllTimings()" class="btn btn-secondary">
+                            <span class="material-icons">schedule</span>
+                            Adjust All Timings
+                        </button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <button onclick="translateAll(this)" class="btn btn-secondary">
+                            <span class="material-icons">translate</span>
+                            Translate to Sinhala
+                        </button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <button class="btn btn-primary" onclick="downloadSRT()">
+                            <span class="material-icons">download</span>
+                            Download SRT
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="subtitle-style-card">
+                    <h2><span class="material-icons">format_color_text</span> Subtitle Style    <span class="material-icons" onclick="openSettings()">arrow_drop_down</span></h2>
+                    
+                    <div class="style-controls">
+                        <div class="style-group">
+                            <label>Font Size: <span id="fZ"></span></label>
+                            <input type="range" id="fontSize" min="16" max="48" value="24" oninput="updateSubtitleStyle()">
+                        </div>
+                        
+                        <div class="style-group">
+                            <label>Text Color</label>
+                            <input type="color" id="textColor" value="#ffffff" oninput="updateSubtitleStyle()">
+                        </div>
+                        
+                        <div class="style-group">
+                            <label>Background Color</label>
+                            <input type="color" id="backgroundColor" value="#000000" oninput="updateSubtitleStyle()">
+                        </div>
+                        
+                        <div class="style-group">
+                            <label>Background Opacity</label>
+                            <input type="range" id="backgroundOpacity" min="0" max="100" value="50" oninput="updateSubtitleStyle()">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="subtitles-section">
+                <div class="subtitles-card">
+                    <div class="subtitles-header">
+                        <h2><span class="material-icons">format_quote</span> Subtitles</h2>
+                        <div class="search-box">
+                            <span class="material-icons">search</span>
+                            <input type="text" id="searchSubtitles" placeholder="Search subtitles...">
+                        </div>
+                    </div>
+                    <div id="editorContainer" class="subtitles-container"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="screenshotContainer" class="screenshot-container hide"></div>
+    <footer>
+        <p class="subtitle">Advanced Subtitle Editor By <span style="color:red">RvX</span></p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="j.js"></script>
+    <script src="script.js"></script>
+</body>
+      </html>
